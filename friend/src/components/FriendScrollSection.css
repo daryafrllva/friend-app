@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Friend Scroll Section</title>
+<style>
+     /* Reset & Base */
+ * {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+ }
+body {
+    font-family: 'Open Sans', ui-sans-serif, system-ui, sans-serif;
+    background-color: white;
+    overflow-x: hidden;
+}
+
+/* Main Scroll Section */
+.friend-scroll-section {
+    position: relative;
+    min-height: 8000px;
+    width: 100%;
+    background-color: white;
+}
+
+.friend-sticky-container {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    --wc0-x: 20dvw;
+    --wc0-y: 26dvh;
+    --wc1-x: 22dvw;
+    --wc1-y: 30dvh;
+    --wc2-x: 25dvw;
+    --wc2-y: 20dvh;
+    --wc3-x: 26dvw;
+    --wc3-y: 30dvh;
+}
+
+@media (min-width: 640px) {
+    .friend-sticky-container {
+        --wc0-x: 38dvw;
+        --wc0-y: 20dvh;
+        --wc1-x: 38dvw;
+        --wc1-y: 20dvh;
+        --wc2-x: 38dvw;
+        --wc2-y: 20dvh;
+        --wc3-x: 38dvw;
+        --wc3-y: 20dvh;
+    }
+}
+
+/* Layers: absolute positioning */
+.friend-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Footer Logo */
+.friend-logo {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 50%;
+    height: 25%;
+    transform: translate(-50%, 50%) scale(6);
+    transform-origin: center center;
+    opacity: 0;
+}
+
+/* Lady images */
+.friend-lady {
+    opacity: 0;
+    object-fit: cover;
+}
+
+/* Word Clouds */
+.friend-word-cloud {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 20rem;
+    height: 20rem;
+    object-fit: cover;
+    transform-origin: center center;
+    opacity: 0;
+}
+
+@media (min-width: 1024px) {
+    .friend-word-cloud {
+        width: 30rem;
+        height: 30rem;
+    }
+}
+
+/* Mobile CTA */
+.friend-mobile-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@media (min-width: 1024px) {
+    .friend-mobile-content {
+        display: none;
+    }
+}
+
+/* Desktop CTA */
+.friend-desktop-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .friend-desktop-content {
+        display: block;
+    }
+}
+
+.friend-headline {
+    color: black;
+    font-size: 1.5rem;
+    font-weight: 300;
+    opacity: 0;
+    transform: translate(0, 0);
+}
+
+.friend-order-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    gap: 0.5rem;
+    opacity: 0;
+    transform: translate(0, 0);
+    visibility: hidden;
+}
+
+.friend-order-btn:hover {
+    opacity: 0.75;
+}
+
+.friend-details {
+    display: flex;
+    flex-direction: column;
+    padding-left: 0.5rem;
+    font-weight: 300;
+    font-size: 1rem;
+    color: black;
+    opacity: 0;
+    transform: translate(0, 0);
+    visibility: hidden;
+}
+
+.friend-appstore-badge {
+    cursor: pointer;
+    opacity: 0;
+    transform: translate(0, 0);
+    visibility: hidden;
+    margin-top: 2rem;
+    margin-right: 1.75rem;
+}
+
+/* Desktop CTA positions */
+.friend-desktop-logo-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20rem;
+    height: 20rem;
+    transform: translate(-50%, -50%) translate(-350px, -200px);
+    transform-origin: center center;
+}
+
+.friend-desktop-cta-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20rem;
+    height: 30rem;
+    transform: translate(-50%, -50%) translate(400px, 330px);
+    transform-origin: center center;
+}
+</style>
+</head>
+<body>
+
+<div id="root">
+<div class="flex flex-col w-full">
+<section class="friend-scroll-section" aria-label="Sticky viewport scroll section">
+<div class="friend-sticky-container">
+
+<!-- Footer Logo -->
+<img
+ alt="Friend"
+class="friend-logo friend-layer"
+src="./images/footer-logo.svg"
+style="opacity: 0; transform: translate(-50%, 50%) scale(6); transform-origin: center center;"
+/>
+
+<!-- Lady images -->
+<img
+ alt="Lady"
+class="friend-lady friend-layer hidden sm:block"
+src="./images/lady.jpg"
+style="opacity: 0; object-fit: cover;"
+/>
+<img
+ alt="Lady"
+class="friend-lady friend-layer block sm:hidden"
+src="./images/lady-more-vertical.jpg"
+style="opacity: 0; object-fit: cover;"
+/>
+
+<!-- Gradients -->
+<img
+ alt="Upper Left Gradient"
+class="friend-layer"
+src="./images/upper_left_gradient.png"
+style="opacity: 1;"
+/>
+<img
+ alt="Bottom Left Gradient"
+class="friend-layer"
+src="./images/bottom_left_gradient.png"
+style="opacity: 1;"
+/>
+<img
+ alt="Bottom Right Gradient"
+class="friend-layer"
+src="./images/bottom_right_gradient.png"
+style="opacity: 1;"
+/>
+<img
+ alt="Upper Right Gradient"
+class="friend-layer"
+src="./images/upper_right_gradient.png"
+style="opacity: 1;"
+/>
+
+<!-- Word Clouds -->
+<img
+ alt="Word Cloud"
+class="friend-word-cloud"
+src="./images/word_cloud_0.png"
+style="
+opacity: 0;
+transform-origin: center center;
+transform: translate(-50%, 50%)
+translate(calc(var(--wc0-x) * 1 * -1), calc(var(--wc0-y) * 1 * -1))
+scale(1);
+"
+/>
+<img
+ alt="Word Cloud"
+class="friend-word-cloud"
+src="./images/word_cloud_1.png"
+style="
+opacity: 0;
+transform-origin: center center;
+transform: translate(-50%, 50%)
+translate(calc(var(--wc1-x) * 1 * -1), calc(var(--wc1-y) * 1))
+scale(1);
+"
+/>
+<img
+ alt="Word Cloud"
+class="friend-word-cloud"
+src="./images/word_cloud_2.png"
+style="
+opacity: 0;
+transform-origin: center center;
+transform: translate(-50%, 50%)
+translate(calc(var(--wc2-x) * 1), calc(var(--wc2-y) * 1))
+scale(1);
+"
+/>
+<img
+ alt="Word Cloud"
+class="friend-word-cloud"
+src="./images/word_cloud_3.png"
+style="
+opacity: 0;
+transform-origin: center center;
+transform: translate(-50%, 50%)
+translate(calc(var(--wc3-x) * 1), calc(var(--wc3-y) * 1 * -1))
+scale(1);
+"
+/>
+
+<!-- Mobile CTA -->
+<div class="friend-mobile-content isolate">
+<img
+ alt="Phone"
+class="absolute bottom-1/2 left-1/2 w-[50rem] h-[50rem] object-cover -z-10"
+src="./images/phone.png"
+style="opacity: 0; transform: translate(-50%, 50%) scale(0.7); visibility: hidden;"
+/>
+<img
+ alt="Word Cloud"
+class="absolute bottom-1/2 left-1/2 w-[25rem] h-[25rem] object-cover z-0"
+src="./images/word_cloud_4.png"
+style="opacity: 0; transform-origin: center center; transform: translate(-50%, 50%) scale(0.7); visibility: hidden;"
+/>
+<div class="absolute top-5 left-5 w-2/3 h-1/2 flex flex-col items-start justify-start z-1">
+<img alt="Friend" class="w-[25rem] p-5" src="./images/footer-logo.svg" style="opacity: 1; transform: translate(0px, 0%);" />
+<p class="friend-headline pl-5" style="opacity: 1; transform: translate(0px, 0%);">
+                                                                                  Your new roommate is waiting.
+</p>
+</div>
+<div class="absolute bottom-20 left-10 w-1/2 h-1/3 flex flex-col items-start mr-6 justify-end text-black text-sm font-light z-2">
+<button class="friend-order-btn" style="opacity: 1; transform: translate(0px, 0%); visibility: visible;">
+<p class="text-white font-normal">Order Now</p>
+<img alt="Up" class="h-5 w-5" src="./images/arrow_right.png" />
+</button>
+<div class="friend-details" style="opacity: 1; transform: translate(0px, 0%); visibility: visible;">
+<p>$129</p>
+<p>No subscription</p>
+<p>1-year warranty</p>
+<p>Made in Canada</p>
+</div>
+<img
+ alt="Download on the App Store"
+class="friend-appstore-badge"
+src="./images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg"
+style="opacity: 1; transform: translate(0px, 0%); visibility: visible;"
+/>
+</div>
+</div>
+
+<!-- Desktop CTA -->
+<div class="friend-desktop-content">
+<img
+ alt="Phone"
+class="absolute bottom-1/2 left-1/2 w-[75rem] h-[75rem] object-cover"
+src="./images/phone.png"
+style="opacity: 1; transform: translate(-50%, 50%);"
+/>
+<img
+ alt="Word Cloud"
+class="absolute bottom-1/2 left-1/2 w-[25rem] h-[25rem] object-cover"
+src="./images/word_cloud_4.png"
+style="opacity: 1; transform-origin: center center; transform: translate(-50%, 50%);"
+/>
+<div class="friend-desktop-logo-box">
+<img alt="Friend" class="w-full p-5" src="./images/footer-logo.svg" style="opacity: 1; transform: translate(0px, 0%);" />
+<p class="friend-headline pl-5" style="opacity: 1; transform: translate(0px, 0%);">
+                                                                                  Your new roommate is waiting.
+</p>
+</div>
+<div class="friend-desktop-cta-box">
+<button class="friend-order-btn mb-2">
+<p class="text-white font-normal text-xl">Order Now</p>
+<img alt="Up" class="h-5 w-5" src="./images/arrow_right.png" />
+</button>
+<div class="friend-details my-6">
+<p>$129</p>
+<p>No subscription</p>
+<p>1-year warranty</p>
+<p>Made in Canada</p>
+</div>
+<img
+ alt="Download on the App Store"
+class="friend-appstore-badge mt-2"
+src="./images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg"
+style="opacity: 1; transform: translate(0px, 0%);"
+/>
+</div>
+</div>
+
+</div>
+</section>
+</div>
+</div>
+
+</body>
+</html>
