@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import '../styles/FriendScrollSection.css'; // Убедитесь, что стили подключены
 
 import kulonImage from '../images/kulon.png';
+import RequestModal from './RequestModal';
 
 // Импорты изображений (оставил как у вас)
 import footerLogo from '../images/footer-logo.svg';
@@ -90,6 +91,18 @@ const easeInOutCubic = (t) => {
 const ScrollAnimation = () => {
     const sectionRef = useRef(null);
     const [scrollProgress, setScrollProgress] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+    const handleRequestSubmit = (data) => {
+        // handle submitted request data (send to API or log)
+        console.log('Request submitted:', data);
+        // simple feedback
+        try {
+            alert('Заявка отправлена. Спасибо!');
+        } catch (e) {}
+    };
 
     // Расчет прогресса прокрутки внутри секции
     const updateScrollProgress = () => {
@@ -367,13 +380,14 @@ const ScrollAnimation = () => {
                     }}
                 >
                     <button 
+                        onClick={openModal}
                         className="flex items-center justify-center bg-black text-white px-6 py-2 mb-2 rounded-full hover:opacity-50 cursor-pointer gap-2 z-20"
                         style={{
                             opacity: 1,
                             transform: 'translate(0px, 0%)'
                         }}
                     >
-                        <p className="text-white font-normal text-xl">Заказать сейчас</p>
+                        <p className="text-white font-normal text-xl">Оставить заявку</p>
                         <img alt="Arrow" className="h-5 w-5" src={arrowRight} />
                     </button>
                     
@@ -384,10 +398,9 @@ const ScrollAnimation = () => {
                             transform: 'translate(0px, 0%)'
                         }}
                     >
-                        <p>$129</p>
-                        <p>Без подписки</p>
+                        <p>5000₽</p>
+                        <p>подписка 500₽ месяц</p>
                         <p>1 год гарантии</p>
-                        <p>Сделано в Канаде</p>
                     </div>
                     
                     <img 
@@ -402,6 +415,8 @@ const ScrollAnimation = () => {
                 </div>
 
             </div>
+            {/* Request modal (portal-like simple render) */}
+            <RequestModal isOpen={isModalOpen} onClose={closeModal} onSubmit={handleRequestSubmit} />
         </section>
     );
 };
