@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import '../styles/FriendScrollSection.css'; // Убедитесь, что стили подключены
 
+import kulonImage from '../images/kulon.png';
+
 // Импорты изображений (оставил как у вас)
 import footerLogo from '../images/footer-logo.svg';
 import ladyImage from '../images/lady.jpg';
@@ -19,6 +21,58 @@ import phoneImage from '../images/phone.png';
 import arrowRight from '../images/arrow_right.png';
 import appStoreBadge from '../images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg';
 
+
+const FriendPage = () => {
+    // 1. Создаем ref для секции, к которой будем скроллить
+    const animationSectionRef = useRef(null);
+
+    // 2. Функция для плавной прокрутки
+    const handleScrollDown = () => {
+        animationSectionRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start', // Скроллим к началу секции
+        });
+    };
+
+    return (
+        <main>
+            {/* --- 1. НОВЫЙ ИНТРО-БЛОК --- */}
+            <section
+                className="relative flex items-start justify-center w-full h-[100dvh] bg-white"
+                aria-label="Intro Section"
+            >
+                {/* Центральное изображение */}
+                <div className="flex flex-col items-center px-4">
+                    <img
+                        src={kulonImage}
+                        alt="Kulon"
+                        // Задаем разумные ограничения по размеру, чтобы он не был слишком большим
+                        className="w-auto h-auto max-w-[60vw] sm:max-w-[40vw] md:max-w-[30vw] max-h-[60vh] animate-sway"                    />
+                </div>
+
+                {/* Стрелка вниз */}
+                <button
+                    onClick={handleScrollDown}
+                    className="absolute bottom-10 left-1/2 -translate-x-1/2 p-2 rounded-full transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-gray-400 animate-bounce[animation-duration:2s]"
+                    aria-label="Scroll down to animation"
+                >
+                    {/* Ваш SVG-код для стрелки */}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 9L12 15L6 9" stroke="#33363F" strokeWidth="2" />
+                    </svg>
+                </button>
+            </section>
+
+            {/* --- 2. ВАША СЕКЦИЯ АНИМАЦИИ --- */}
+            {/* Мы "оборачиваем" ее в div и вешаем ref на этот div.
+              Это позволяет нам прокрутиться к ней.
+            */}
+            <div ref={animationSectionRef}>
+                <ScrollAnimation />
+            </div>
+        </main>
+    );
+};
 
 // Функция для интерполяции значения
 const lerp = (start, end, t) => start * (1 - t) + end * t;
@@ -352,4 +406,4 @@ const ScrollAnimation = () => {
     );
 };
 
-export default ScrollAnimation;
+export default FriendPage;
