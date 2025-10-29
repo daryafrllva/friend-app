@@ -213,3 +213,17 @@
     .lg\:pt-8 { padding-top: 2rem; }
     .lg\:text-center { text-align: center; }
 }
+
+@keyframes sway {
+    0%, 100% {
+        transform: rotate(-3deg);
+    }
+    50% {
+        transform: rotate(3deg);
+    }
+}
+.animate-sway {
+    animation: sway 4s ease-in-out infinite;
+    /* Важно: говорим ему качаться от верхнего центра, как маятник */
+    transform-origin: top center;
+}
