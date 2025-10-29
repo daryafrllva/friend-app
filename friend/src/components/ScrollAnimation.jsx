@@ -1,122 +1,227 @@
 import React, { useRef, useState, useEffect } from 'react';
-import './FriendScrollSection.css';
+import '../styles/FriendScrollSection.css'; // Убедитесь, что стили подключены
+
+// Импорты изображений (оставил как у вас)
+import footerLogo from '../images/footer-logo.svg';
+import ladyImage from '../images/lady.jpg';
+import ladyVerticalImage from '../images/lady-more-vertical.jpg';
+import upperLeftGradient from '../images/upper_left_gradient.png';
+import bottomLeftGradient from '../images/bottom_left_gradient.png';
+import bottomRightGradient from '../images/bottom_right_gradient.png';
+import upperRightGradient from '../images/upper_right_gradient.png';
+import wordCloud0 from '../images/word_cloud_0.png';
+import wordCloud1 from '../images/word_cloud_1.png';
+import wordCloud2 from '../images/word_cloud_2.png';
+import wordCloud3 from '../images/word_cloud_3.png';
+import wordCloud4 from '../images/word_cloud_4.png';
+// import arrowRight from '../images/arrow_right.png'; // Не используется здесь
+// import appStoreBadge from '../images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg'; // Не используется здесь
+
+
+// Функция для интерполяции значения
+const lerp = (start, end, t) => start * (1 - t) + end * t;
+// Функция для нормализации прогресса в заданном диапазоне
+const normalizeProgress = (progress, start, end) => {
+    if (progress < start) return 0;
+    if (progress > end) return 1;
+    return (progress - start) / (end - start);
+};
 
 const ScrollAnimation = () => {
     const sectionRef = useRef(null);
     const [scrollProgress, setScrollProgress] = useState(0);
 
+    // Расчет прогресса прокрутки внутри секции
     const updateScrollProgress = () => {
-        if (!sectionRef.current) return;
-        const rect = sectionRef.current.getBoundingClientRect();
-        const scrollTop = -rect.top;
-        const totalScroll = rect.height - window.innerHeight;
-        const progress = Math.max(0, Math.min(1, scrollTop / totalScroll));
-        setScrollProgress(progress);
+        const element = sectionRef.current;
+        if (!element) return;
+
+        const rect = element.getBoundingClientRect();
+        const scrollTop = window.scrollY - element.offsetTop; // Прокрутка относительно начала секции
+        const elementHeight = rect.height;
+        const windowHeight = window.innerHeight;
+
+        // Общая высота прокрутки внутри секции = высота секции - высота окна
+        const totalScrollableHeight = elementHeight - windowHeight;
+
+        if (totalScrollableHeight <= 0) {
+            setScrollProgress(0); // Секция меньше окна, прокрутки нет
+            return;
+        }
+
+        const currentProgress = Math.max(0, Math.min(1, scrollTop / totalScrollableHeight));
+        setScrollProgress(currentProgress);
     };
 
     useEffect(() => {
-        window.addEventListener('scroll', updateScrollProgress, { passive: true });
-        window.addEventListener('resize', updateScrollProgress);
-        updateScrollProgress();
+        // Добавляем requestAnimationFrame для плавности
+        let animationFrameId = null;
+        const handleScroll = () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(updateScrollProgress);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener('resize', handleScroll);
+        updateScrollProgress(); // Первоначальный расчет
+
         return () => {
-            window.removeEventListener('scroll', updateScrollProgress);
-            window.removeEventListener('resize', updateScrollProgress);
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('resize', handleScroll);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
         };
     }, []);
 
-    const ease = (t, start, end, thresholdStart, thresholdEnd) => {
-        if (t < thresholdStart) return 0;
-        if (t > thresholdEnd) return 1;
-        return (t - thresholdStart) / (thresholdEnd - thresholdStart);
-    };
+    // --- Параметры анимации ---
 
-    const opacityLogo = ease(scrollProgress, 0.3, 0.36, 0.3, 0.36);
-    const scaleLogo = 1 + ease(scrollProgress, 0.11, 0.26, 0.11, 0.26) * 5;
-    const opacityLady = ease(scrollProgress, 0.35, 0.4, 0.35, 0.4);
-    const opacityGradients = {
-        ul: ease(scrollProgress, 0.44, 0.6, 0.44, 0.6),
-        bl: ease(scrollProgress, 0.48, 0.58, 0.48, 0.58),
-        br: ease(scrollProgress, 0.52, 0.62, 0.52, 0.62),
-        ur: ease(scrollProgress, 0.57, 0.66, 0.57, 0.66),
-    };
+    // 1. Белый слой (появляется в конце)
+    // На friend.com белый слой закрывает всё в самом конце (ближе к 1.0)
+    const blurEndOpacity = normalizeProgress(scrollProgress, 0.85, 0.95);
 
-    const wc0Opacity = scrollProgress > 0.6 ? 1 - ease(scrollProgress, 0.6, 0.69, 0.6, 0.69) : ease(scrollProgress, 0.42, 0.46, 0.42, 0.46);
-    const wc0Scale = ease(scrollProgress, 0.2, 0.43, 0.2, 0.43);
-    const wc0Factor = 1;
 
-    const logoOpacity = ease(scrollProgress, 0.2, 0.35, 0.2, 0.35);
-    const headlineOpacity = ease(scrollProgress, 0.25, 0.4, 0.25, 0.4);
-    const btnOpacity = ease(scrollProgress, 0.3, 0.45, 0.3, 0.45);
-    const detailsOpacity = ease(scrollProgress, 0.35, 0.5, 0.35, 0.5);
-    const badgeOpacity = ease(scrollProgress, 0.4, 0.55, 0.4, 0.55);
+    const logoScaleProgress = normalizeProgress(scrollProgress, 0.0, 0.50);
+    const logoScale = lerp(1, 15, logoScaleProgress);
+
+    const logoOpacity = 1 - normalizeProgress(scrollProgress, 0.27, 0.30);
+
+
+    // 3. Девушка (плавное появление и исчезновение)
+    // Появляется ~0.35 - 0.4, исчезает ~0.6 - 0.69
+    const ladyFadeInProgress = normalizeProgress(scrollProgress, 0.35, 0.42);
+    const ladyFadeOutProgress = 1 - normalizeProgress(scrollProgress, 0.6, 0.69);
+    const ladyOpacity = Math.min(ladyFadeInProgress, ladyFadeOutProgress);
+    const gradientOpacity = normalizeProgress(scrollProgress, 0.44, 0.48) * (1 - normalizeProgress(scrollProgress, 0.62, 0.66));
+
+
+    // 5. Word Clouds
+    const clouds = [wordCloud0, wordCloud1, wordCloud2, wordCloud3, wordCloud4];
+
+    // Параметры для анимации облаков (тайминги и позиции примерные, нужно подбирать)
+    // start: начало движения, end: конец движения (центр)
+    // fadeInEnd: конец появления, fadeOutStart: начало исчезновения
+    const cloudAnimations = [
+        // cloud 0 (target: top-left по CSS переменным)
+        { start: 0.35, end: 0.44, fadeInEnd: 0.39, initialOffsetX: -150, initialOffsetY: -150, finalLeft: '25%', finalTop: '30%' },
+        // cloud 1 (едет в нижний левый угол)
+        { start: 0.40, end: 0.49, fadeInEnd: 0.44, initialOffsetX: -150, initialOffsetY: 150, finalLeft: '20%', finalTop: '70%' },
+        // cloud 2 (едет в верхний правый угол)
+        { start: 0.45, end: 0.54, fadeInEnd: 0.49, initialOffsetX: 150, initialOffsetY: -150, finalLeft: '75%', finalTop: '25%' },
+        // cloud 3 (едет в нижний правый угол)
+        { start: 0.50, end: 0.59, fadeInEnd: 0.54, initialOffsetX: 150, initialOffsetY: 150, finalLeft: '80%', finalTop: '65%' },
+        // cloud 4 (появляется/исчезает в центре) - без изменений
+        { start: 0.61, end: 0.61, fadeInEnd: 0.63, fadeOutStart: 0.65, initialOffsetX: 0, initialOffsetY: 0 },
+    ];
+    const CLOUD_4_FADEOUT_START = cloudAnimations[4].fadeOutStart;
+    const FADE_OUT_DURATION = 0.04; // Длительность исчезновения облака
+
 
     return (
-        <section className="friend-scroll-section" ref={sectionRef}>
-            <div className="friend-sticky-container">
-                <div className="friend-canvas-wrapper">
-                    <canvas width="1526" height="945"></canvas>
-                </div>
-                <img src="./images/footer-logo.svg" alt="Friend" className="friend-logo friend-layer" />
-                <img src="./images/lady.jpg" alt="Lady" className="friend-lady friend-layer hidden sm:block" />
-                <img src="./images/lady-more-vertical.jpg" alt="Lady" className="friend-lady friend-layer block sm:hidden" />
+        // Увеличьте min-h, если анимация кажется слишком быстрой
+        <section ref={sectionRef} className="relative min-h-[8000px] w-full bg-white" aria-label="Friend Scroll Animation Section">
+            {/* sticky-контейнер для анимации */}
+            {/* Добавляем CSS переменные прямо сюда */}
+            <div className="sticky top-0 w-full h-[100dvh] overflow-hidden
+                  [--wc0-x:20dvw] [--wc0-y:26dvh]
+                  [--wc1-x:22dvw] [--wc1-y:30dvh]
+                  [--wc2-x:25dvw] [--wc2-y:20dvh]
+                  [--wc3-x:26dvw] [--wc3-y:30dvh]
+                  sm:[--wc0-x:38dvw] sm:[--wc0-y:20dvh]
+                  sm:[--wc1-x:38dvw] sm:[--wc1-y:20dvh] /* В CSS эти позиции совпадают для sm */
+                  sm:[--wc2-x:38dvw] sm:[--wc2-y:20dvh] /* В CSS эти позиции совпадают для sm */
+                  sm:[--wc3-x:38dvw] sm:[--wc3-y:20dvh] /* В CSS эти позиции совпадают для sm */
+                ">
 
-                <img src="./images/upper_left_gradient.png" alt="Upper Left Gradient" className="friend-gradient friend-layer" style={{ opacity: opacityGradients.ul }} />
-                <img src="./images/bottom_left_gradient.png" alt="Bottom Left Gradient" className="friend-gradient friend-layer" style={{ opacity: opacityGradients.bl }} />
-                <img src="./images/bottom_right_gradient.png" alt="Bottom Right Gradient" className="friend-gradient friend-layer" style={{ opacity: opacityGradients.br }} />
-                <img src="./images/upper_right_gradient.png" alt="Upper Right Gradient" className="friend-gradient friend-layer" style={{ opacity: opacityGradients.ur }} />
+                {/* --- Элементы анимации --- */}
 
-                <img src="./images/word_cloud_0.png" alt="Word Cloud" className="friend-word-cloud" style={{
-                    transform: `translate(-50%, 50%) translate(calc(var(--wc0-x) * ${wc0Factor} * -1), calc(var(--wc0-y) * ${wc0Factor} * -1)) scale(${wc0Scale})`,
-                    opacity: wc0Opacity,
-                }} />
+                {/* ЛОГОТИП */}
+                <img
+                    src={footerLogo} alt="Friend Logo"
+                    // Убираем max-width/height, чтобы позволить логотипу сильно увеличиться
+                    className="absolute z-25 bottom-1/2 left-1/2 w-1/2 h-1/4"
+                    style={{
+                        // width: '80vw', height: '32vw', // Можно убрать или изменить, если мешает
+                        opacity: logoOpacity,
+                        filter: 'drop-shadow(0 0 40px #fff) drop-shadow(0 0 10px #fff)',
+                        transform: `translate(-50%, 50%) scale(${logoScale})`,
+                        willChange: 'transform, opacity',
+                    }}
+                />
 
-                {/* Mobile CTA */}
-                <div className="friend-mobile-content isolate">
-                    <div className="absolute top-5 left-5 w-2/3 h-1/2 flex flex-col items-start justify-start z-1">
-                        <img src="./images/footer-logo.svg" alt="Friend" className="w-[25rem] p-5 friend-logo" style={{ opacity: logoOpacity, transform: `translate(0, ${(1 - logoOpacity) * 50}%)` }} />
-                        <p className="friend-headline pl-5" style={{ opacity: headlineOpacity, transform: `translate(0, ${(1 - headlineOpacity) * 50}%)` }}>
-                            Your new roommate is waiting.
-                        </p>
-                    </div>
-                    <div className="absolute bottom-20 left-10 w-1/2 h-1/3 flex flex-col items-start mr-6 justify-end text-black text-sm font-light z-2">
-                        <button className="friend-order-btn" style={{ opacity: btnOpacity, transform: `translate(0, ${(1 - btnOpacity) * 50}%)`, visibility: btnOpacity > 0 ? 'visible' : 'hidden' }}>
-                            <p>Order Now</p>
-                            <img src="./images/arrow_right.png" alt="Up" />
-                        </button>
-                        <div className="friend-details" style={{ opacity: detailsOpacity, transform: `translate(0, ${(1 - detailsOpacity) * 50}%)`, visibility: detailsOpacity > 0 ? 'visible' : 'hidden' }}>
-                            <p>$129</p>
-                            <p>No subscription</p>
-                            <p>1-year warranty</p>
-                            <p>Made in Canada</p>
-                        </div>
-                        <img src="./images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg" alt="Download on the App Store" className="friend-appstore-badge" style={{ opacity: badgeOpacity, transform: `translate(0, ${(1 - badgeOpacity) * 50}%)`, visibility: badgeOpacity > 0 ? 'visible' : 'hidden' }} />
-                    </div>
-                </div>
+                {/* ДЕВУШКА */}
+                <picture className="absolute bottom-0 left-0 w-full h-full z-20">
+                    <source srcSet={ladyImage} media="(min-width: 640px)" />
+                    <img src={ladyVerticalImage} alt="Lady" className="w-full h-full object-cover object-bottom" style={{ opacity: ladyOpacity, willChange: 'opacity' }} />
+                </picture>
 
-                {/* Desktop CTA */}
-                <div className="friend-desktop-content">
-                    <img src="./images/phone.png" alt="Phone" className="friend-layer" style={{ opacity: 1, transform: 'translate(-50%, 50%)' }} />
-                    <img src="./images/word_cloud_4.png" alt="Word Cloud" className="absolute bottom-1/2 left-1/2 w-[25rem] h-[25rem] object-cover" style={{ opacity: 1, transform: 'translate(-50%, 50%)' }} />
+                {/* ГРАДИЕНТЫ */}
+                <img src={upperLeftGradient} alt="" className="absolute inset-0 w-full h-full z-15" style={{ opacity: gradientOpacity, willChange: 'opacity' }}/>
+                <img src={bottomLeftGradient} alt="" className="absolute inset-0 w-full h-full z-15" style={{ opacity: gradientOpacity, willChange: 'opacity' }}/>
+                <img src={bottomRightGradient} alt="" className="absolute inset-0 w-full h-full z-15" style={{ opacity: gradientOpacity, willChange: 'opacity' }}/>
+                <img src={upperRightGradient} alt="" className="absolute inset-0 w-full h-full z-15" style={{ opacity: gradientOpacity, willChange: 'opacity' }}/>
 
-                    <div className="friend-desktop-logo-box">
-                        <img src="./images/footer-logo.svg" alt="Friend" className="w-full p-5" style={{ opacity: 1 }} />
-                        <p className="friend-headline pl-5" style={{ opacity: 1 }}>Your new roommate is waiting.</p>
-                    </div>
 
-                    <div className="friend-desktop-cta-box">
-                        <button className="friend-order-btn mb-2">
-                            <p className="text-white font-normal text-xl">Order Now</p>
-                            <img src="./images/arrow_right.png" alt="Up" />
-                        </button>
-                        <div className="friend-details my-6">
-                            <p>$129</p>
-                            <p>No subscription</p>
-                            <p>1-year warranty</p>
-                            <p>Made in Canada</p>
-                        </div>
-                        <img src="./images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg" alt="Download on the App Store" className="friend-appstore-badge mt-2" />
-                    </div>
-                </div>
+                {/* WORD CLOUDS */}
+                {clouds.map((cloudSrc, idx) => {
+                    const anim = cloudAnimations[idx];
+                    const moveProgress = normalizeProgress(scrollProgress, anim.start, anim.end);
+
+                    // Opacity
+                    const fadeIn = normalizeProgress(scrollProgress, anim.start, anim.fadeInEnd);
+                    // Облака 0-3 исчезают, когда начинает исчезать облако 4
+                    const currentFadeOutStart = idx < 4 ? CLOUD_4_FADEOUT_START : anim.fadeOutStart;
+                    const fadeOut = 1 - normalizeProgress(scrollProgress, currentFadeOutStart, currentFadeOutStart + FADE_OUT_DURATION);
+                    const cloudOpacity = Math.min(fadeIn, fadeOut);
+
+                    // Scale
+                    const scale = idx === 4 ? lerp(0.8, 1, fadeIn) : lerp(0.7, 1, moveProgress);
+
+                    // Position & Transform
+                    let styleProps = {};
+                    if (idx < 4) {
+                        // Облака 0-3: позиция по anim.finalLeft/Top, transform анимирует смещение к 0
+                        const currentOffsetX = lerp(anim.initialOffsetX, 0, moveProgress);
+                        const currentOffsetY = lerp(anim.initialOffsetY, 0, moveProgress);
+                        styleProps = {
+                            // Используем finalLeft/finalTop из массива cloudAnimations
+                            left: anim.finalLeft,
+                            top: anim.finalTop,
+                            opacity: cloudOpacity,
+                            // Анимируем transform от initialOffset к 0
+                            transform: `translate(-50%, -50%) translate(${currentOffsetX}%, ${currentOffsetY}%) scale(${scale})`,
+                        };
+                    } else {
+                        // Облако 4: центрируется стандартно
+                        styleProps = {
+                            left: '50%',
+                            top: '50%',
+                            opacity: cloudOpacity,
+                            transform: `translate(-50%, -50%) scale(${scale})`,
+                        };
+                    }
+
+                    return (
+                        <img
+                            key={idx}
+                            src={cloudSrc}
+                            alt={`Word Cloud ${idx}`}
+                            // Убедитесь, что классы Tailwind/CSS подходят по размеру
+                            className="absolute z-30 w-80 h-80 lg:w-120 lg:h-120 object-contain"
+                            style={{
+                                ...styleProps, // Применяем рассчитанные стили
+                                pointerEvents: 'none',
+                                willChange: 'transform, opacity',
+                                filter: 'drop-shadow(0 4px 12px rgba(255,255,255,0.6))',
+                            }}
+                        />
+                    );
+                })}
+
+                {/* Белый слой для завершения анимации */}
+                <div
+                    className="absolute inset-0 bg-white z-40 pointer-events-none"
+                    style={{ opacity: blurEndOpacity, backdropFilter: `blur(${blurEndOpacity * 10}px)`, WebkitBackdropFilter: `blur(${blurEndOpacity * 10}px)`, willChange: 'opacity, backdrop-filter' }}
+                />
+
             </div>
         </section>
     );

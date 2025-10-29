@@ -1,0 +1,251 @@
+/* Phone Component Styles */
+
+.phone-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+  overflow: hidden;
+}
+
+.phone-mobile-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  isolation: isolate;
+}
+
+.phone-desktop-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.phone-image {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  object-fit: cover;
+}
+
+.phone-image-mobile {
+  width: 200px;
+  height: 200px;
+  z-index: -10;
+  opacity: 0;
+  transform: translate(-50%, 50%) scale(0.7);
+  visibility: hidden;
+}
+
+.phone-image-desktop {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+  transform: translate(-50%, 50%);
+}
+
+.word-cloud-image {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  transform-origin: center center;
+}
+
+.word-cloud-mobile {
+  z-index: 0;
+  opacity: 0;
+  transform: translate(-50%, 50%) scale(0.7);
+  visibility: hidden;
+}
+
+.word-cloud-desktop {
+  opacity: 1;
+  transform: translate(-50%, 50%);
+}
+
+.friend-branding-mobile {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 66.666667%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  z-index: 1;
+}
+
+.friend-branding-desktop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) translate(-350px, -200px);
+}
+
+.friend-logo {
+  width: 100px;
+  padding: 20px;
+  opacity: 1;
+  transform: translate(0px, 0%);
+}
+
+.friend-logo-desktop {
+  width: 100%;
+  padding: 20px;
+}
+
+.friend-tagline {
+  color: black;
+  font-size: 24px;
+  font-weight: 300;
+  padding-left: 20px;
+  opacity: 1;
+  transform: translate(0px, 0%);
+}
+
+.order-section-mobile {
+  position: absolute;
+  bottom: 80px;
+  left: 40px;
+  width: 50%;
+  height: 33.333333%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 24px;
+  justify-content: flex-end;
+  color: black;
+  font-size: 16px;
+  font-weight: 300;
+  z-index: 2;
+}
+
+.order-section-desktop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 320px;
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) translate(400px, 330px);
+}
+
+.order-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+  padding: 8px 24px;
+  margin-bottom: 32px;
+  border-radius: 9999px;
+  cursor: pointer;
+  gap: 8px;
+  z-index: 500;
+  mix-blend-mode: normal;
+  backface-visibility: hidden;
+  opacity: 1;
+  transform: translate(0px, 0%);
+  visibility: visible;
+  transition: opacity 0.2s;
+}
+
+.order-button:hover {
+  opacity: 0.75;
+}
+
+.order-button-desktop {
+  margin-bottom: 8px;
+  z-index: 20;
+}
+
+.order-button-desktop:hover {
+  opacity: 0.5;
+}
+
+.order-button-text {
+  color: white;
+  font-weight: 400;
+}
+
+.order-button-text-desktop {
+  font-size: 20px;
+}
+
+.product-details {
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
+  font-weight: 300;
+  opacity: 1;
+  transform: translate(0px, 0%);
+  visibility: visible;
+}
+
+.product-details-desktop {
+  color: black;
+  align-items: flex-start;
+  margin: 24px 0;
+  padding-left: 0;
+}
+
+.app-store-badge {
+  cursor: pointer;
+  margin-right: 28px;
+  margin-top: 32px;
+  opacity: 1;
+  transform: translate(0px, 0%);
+  visibility: visible;
+}
+
+.app-store-badge-desktop {
+  margin-top: 8px;
+}
+
+/* Video Section Styles */
+.video-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+}
+
+.video-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+  max-width: 1280px;
+}
+
+.video-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.video-iframe {
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+}
