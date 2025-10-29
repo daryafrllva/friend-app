@@ -3,13 +3,10 @@ import '../styles/faq.css';
 import upArrow from '../images/up-arrow.png';
 
 const FAQ = () => {
-  const [openItems, setOpenItems] = useState({});
+  const [openItem, setOpenItem] = useState(null);
 
   const toggleItem = (index) => {
-    setOpenItems(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
+    setOpenItem(prev => prev === index ? null : index);
   };
 
   const scrollToTop = () => {
@@ -70,7 +67,7 @@ const FAQ = () => {
                 <p 
                   className="text-[1.5rem] sm:text-[13px] transition-transform duration-300 ease-out font-light" 
                   style={{ 
-                    transform: openItems[index] ? "rotate(0deg)" : "rotate(-45deg)" 
+                    transform: openItem === index ? "rotate(0deg)" : "rotate(-45deg)" 
                   }}
                 >
                   ✕
@@ -81,7 +78,7 @@ const FAQ = () => {
             <div 
               className="flex flex-row w-full px-2 overflow-hidden transition-[max-height] duration-300 ease-out" 
               style={{ 
-                maxHeight: openItems[index] ? "200px" : "0px", 
+                maxHeight: openItem === index ? "200px" : "0px", 
                 lineHeight: 1 
               }}
             >
