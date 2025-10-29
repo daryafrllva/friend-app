@@ -27,6 +27,10 @@ const normalizeProgress = (progress, start, end) => {
     return (progress - start) / (end - start);
 };
 
+const easeInOutCubic = (t) => {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+};
+
 const ScrollAnimation = () => {
     const sectionRef = useRef(null);
     const [scrollProgress, setScrollProgress] = useState(0);
@@ -76,13 +80,13 @@ const ScrollAnimation = () => {
 
     // 1. Белый слой (появляется в конце)
     // На friend.com белый слой закрывает всё в самом конце (ближе к 1.0)
-    const blurEndOpacity = normalizeProgress(scrollProgress, 0.85, 0.95);
+    const blurEndOpacity = normalizeProgress(scrollProgress, 0.85, 0.98);
 
 
     const logoScaleProgress = normalizeProgress(scrollProgress, 0.0, 0.50);
-    const logoScale = lerp(1, 15, logoScaleProgress);
+    const logoScale = lerp(1.5, 8, logoScaleProgress);
 
-    const logoOpacity = 1 - normalizeProgress(scrollProgress, 0.27, 0.30);
+    const logoOpacity = 1 - normalizeProgress(scrollProgress, 0.25, 0.38);
 
 
     // 3. Девушка (плавное появление и исчезновение)
