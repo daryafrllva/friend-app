@@ -14,8 +14,10 @@ import wordCloud1 from '../images/word_cloud_1.png';
 import wordCloud2 from '../images/word_cloud_2.png';
 import wordCloud3 from '../images/word_cloud_3.png';
 import wordCloud4 from '../images/word_cloud_4.png';
-// import arrowRight from '../images/arrow_right.png'; // Не используется здесь
-// import appStoreBadge from '../images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg'; // Не используется здесь
+// Phone component images
+import phoneImage from '../images/phone.png';
+import arrowRight from '../images/arrow_right.png';
+import appStoreBadge from '../images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg';
 
 
 // Функция для интерполяции значения
@@ -78,15 +80,24 @@ const ScrollAnimation = () => {
 
     // --- Параметры анимации ---
 
-    // 1. Белый слой (появляется в конце)
-    // На friend.com белый слой закрывает всё в самом конце (ближе к 1.0)
-    const blurEndOpacity = normalizeProgress(scrollProgress, 0.85, 0.98);
-
+    // 1. Белый слой (появляется в конце и остается)
+    const blurEndOpacity = normalizeProgress(scrollProgress, 0.70, 0.75);
 
     const logoScaleProgress = normalizeProgress(scrollProgress, 0.0, 0.50);
     const logoScale = lerp(1.5, 8, logoScaleProgress);
 
     const logoOpacity = 1 - normalizeProgress(scrollProgress, 0.25, 0.38);
+
+    // Phone section elements (появляются после белого слоя)
+    const phoneOpacity = normalizeProgress(scrollProgress, 0.78, 0.82);
+    const phoneScale = lerp(0.8, 1, normalizeProgress(scrollProgress, 0.78, 0.82));
+
+    const friendLogoOpacity = normalizeProgress(scrollProgress, 0.83, 0.87);
+    const friendTextOpacity = normalizeProgress(scrollProgress, 0.85, 0.89);
+    
+    const orderButtonOpacity = normalizeProgress(scrollProgress, 0.87, 0.91);
+    const productDetailsOpacity = normalizeProgress(scrollProgress, 0.89, 0.93);
+    const appStoreOpacity = normalizeProgress(scrollProgress, 0.91, 0.95);
 
 
     // 3. Девушка (плавное появление и исчезновение)
@@ -112,8 +123,8 @@ const ScrollAnimation = () => {
         { start: 0.45, end: 0.54, fadeInEnd: 0.49, initialOffsetX: 150, initialOffsetY: -150, finalLeft: '75%', finalTop: '25%' },
         // cloud 3 (едет в нижний правый угол)
         { start: 0.50, end: 0.59, fadeInEnd: 0.54, initialOffsetX: 150, initialOffsetY: 150, finalLeft: '80%', finalTop: '65%' },
-        // cloud 4 (появляется/исчезает в центре) - без изменений
-        { start: 0.61, end: 0.61, fadeInEnd: 0.63, fadeOutStart: 0.65, initialOffsetX: 0, initialOffsetY: 0 },
+        // cloud 4 (появляется в центре и ОСТАЕТСЯ до конца)
+        { start: 0.61, end: 0.61, fadeInEnd: 0.63, fadeOutStart: 1.1, initialOffsetX: 0, initialOffsetY: 0 },
     ];
     const CLOUD_4_FADEOUT_START = cloudAnimations[4].fadeOutStart;
     const FADE_OUT_DURATION = 0.04; // Длительность исчезновения облака
@@ -121,7 +132,7 @@ const ScrollAnimation = () => {
 
     return (
         // Увеличьте min-h, если анимация кажется слишком быстрой
-        <section ref={sectionRef} className="relative min-h-[8000px] w-full bg-white" aria-label="Friend Scroll Animation Section">
+        <section ref={sectionRef} className="relative min-h-[12000px] w-full bg-white" aria-label="Friend Scroll Animation Section">
             {/* sticky-контейнер для анимации */}
             {/* Добавляем CSS переменные прямо сюда */}
             <div className="sticky top-0 w-full h-[100dvh] overflow-hidden
@@ -171,10 +182,16 @@ const ScrollAnimation = () => {
 
                     // Opacity
                     const fadeIn = normalizeProgress(scrollProgress, anim.start, anim.fadeInEnd);
-                    // Облака 0-3 исчезают, когда начинает исчезать облако 4
-                    const currentFadeOutStart = idx < 4 ? CLOUD_4_FADEOUT_START : anim.fadeOutStart;
-                    const fadeOut = 1 - normalizeProgress(scrollProgress, currentFadeOutStart, currentFadeOutStart + FADE_OUT_DURATION);
-                    const cloudOpacity = Math.min(fadeIn, fadeOut);
+                    let cloudOpacity;
+                    
+                    if (idx === 4) {
+                        // Облако 4 остается видимым до самого конца
+                        cloudOpacity = fadeIn; // Не тускнеет
+                    } else {
+                        // Облака 0-3 исчезают раньше
+                        const fadeOut = 1 - normalizeProgress(scrollProgress, 0.65, 0.69);
+                        cloudOpacity = Math.min(fadeIn, fadeOut);
+                    }
 
                     // Scale
                     const scale = idx === 4 ? lerp(0.8, 1, fadeIn) : lerp(0.7, 1, moveProgress);
@@ -194,12 +211,19 @@ const ScrollAnimation = () => {
                             transform: `translate(-50%, -50%) translate(${currentOffsetX}%, ${currentOffsetY}%) scale(${scale})`,
                         };
                     } else {
-                        // Облако 4: центрируется стандартно
+                        // Облако 4: остается на месте в центре экрана, но уменьшается при появлении телефона
+                        const currentX = 50; // Остается в центре
+                        const currentY = 50; // Остается в центре
+                        
+                        // Уменьшаем облачко когда появляется телефон (0.78-0.82)
+                        const phoneAppearProgress = normalizeProgress(scrollProgress, 0.78, 0.82);
+                        const cloudReductionScale = lerp(1, 0.8, phoneAppearProgress); // Уменьшается до 80% размера
+                        
                         styleProps = {
-                            left: '50%',
-                            top: '50%',
+                            left: `${currentX}%`,
+                            top: `${currentY}%`,
                             opacity: cloudOpacity,
-                            transform: `translate(-50%, -50%) scale(${scale})`,
+                            transform: `translate(-50%, -50%) scale(${scale * cloudReductionScale})`,
                         };
                     }
 
@@ -208,13 +232,13 @@ const ScrollAnimation = () => {
                             key={idx}
                             src={cloudSrc}
                             alt={`Word Cloud ${idx}`}
-                            // Убедитесь, что классы Tailwind/CSS подходят по размеру
-                            className="absolute z-30 w-80 h-80 lg:w-120 lg:h-120 object-contain"
+                            // Облако 4 должно быть поверх телефона, размер как в оригинале
+                            className={`absolute object-contain ${idx === 4 ? 'z-60 w-100 h-100 object-cover' : 'z-30 w-80 h-80 lg:w-120 lg:h-120'}`}
                             style={{
                                 ...styleProps, // Применяем рассчитанные стили
                                 pointerEvents: 'none',
                                 willChange: 'transform, opacity',
-                                filter: 'drop-shadow(0 4px 12px rgba(255,255,255,0.6))',
+                                filter: idx === 4 ? 'drop-shadow(0 4px 12px rgba(0,0,0,0.2))' : 'drop-shadow(0 4px 12px rgba(255,255,255,0.6))',
                             }}
                         />
                     );
@@ -225,6 +249,103 @@ const ScrollAnimation = () => {
                     className="absolute inset-0 bg-white z-40 pointer-events-none"
                     style={{ opacity: blurEndOpacity, backdropFilter: `blur(${blurEndOpacity * 10}px)`, WebkitBackdropFilter: `blur(${blurEndOpacity * 10}px)`, willChange: 'opacity, backdrop-filter' }}
                 />
+
+                {/* PHONE SECTION ELEMENTS (появляются поверх белого слоя) */}
+                
+
+
+                {/* Phone Image */}
+                <img
+                    src={phoneImage}
+                    alt="Phone"
+                    className="absolute z-50 w-[1200px] h-auto object-contain lg:w-[1500px]"
+                    style={{
+                        left: '50%',
+                        top: '50%',
+                        opacity: phoneOpacity,
+                        transform: `translate(-50%, -50%) scale(${phoneScale})`,
+                        willChange: 'transform, opacity',
+                    }}
+                />
+
+                {/* Friend Logo and Text - Desktop как в phone.jsx */}
+                <div 
+                    className="absolute z-50 w-80 h-80 flex flex-col items-start justify-start"
+                    style={{
+                        top: '50%',
+                        left: '50%',
+                        transformOrigin: 'center center',
+                        transform: 'translate(-50%, -50%) translate(-350px, -200px)',
+                        opacity: friendLogoOpacity,
+                        willChange: 'opacity',
+                    }}
+                >
+                    <img 
+                        alt="Friend" 
+                        className="w-full p-5" 
+                        src={footerLogo}
+                        style={{
+                            opacity: 1,
+                            transform: 'translate(0px, 0%)'
+                        }}
+                    />
+                    <p 
+                        className="text-black text-2xl font-light pl-5"
+                        style={{
+                            opacity: friendTextOpacity,
+                            transform: 'translate(0px, 0%)'
+                        }}
+                    >
+                        Ваш новый сосед по комнате ждет.
+                    </p>
+                </div>
+
+                {/* Order Button and Details - Desktop как в phone.jsx */}
+                <div 
+                    className="absolute z-50 w-80 h-120 flex flex-col items-start justify-start"
+                    style={{
+                        top: '50%',
+                        left: '50%',
+                        transformOrigin: 'center center',
+                        transform: 'translate(-50%, -50%) translate(400px, 330px)',
+                        opacity: orderButtonOpacity,
+                        willChange: 'opacity',
+                    }}
+                >
+                    <button 
+                        className="flex items-center justify-center bg-black text-white px-6 py-2 mb-2 rounded-full hover:opacity-50 cursor-pointer gap-2 z-20"
+                        style={{
+                            opacity: 1,
+                            transform: 'translate(0px, 0%)'
+                        }}
+                    >
+                        <p className="text-white font-normal text-xl">Заказать сейчас</p>
+                        <img alt="Arrow" className="h-5 w-5" src={arrowRight} />
+                    </button>
+                    
+                    <div 
+                        className="flex flex-col text-black items-start my-6 font-light"
+                        style={{
+                            opacity: productDetailsOpacity,
+                            transform: 'translate(0px, 0%)'
+                        }}
+                    >
+                        <p>$129</p>
+                        <p>Без подписки</p>
+                        <p>1 год гарантии</p>
+                        <p>Сделано в Канаде</p>
+                    </div>
+                    
+                    <img 
+                        alt="Download on the App Store" 
+                        className="cursor-pointer mr-7 mt-2" 
+                        src={appStoreBadge}
+                        style={{
+                            opacity: productDetailsOpacity,
+                            transform: 'translate(0px, 0%)'
+                        }}
+                    />
+                </div>
 
             </div>
         </section>

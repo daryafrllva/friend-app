@@ -10,6 +10,7 @@ export default defineConfig({
       spacing: {
         '100': '25rem',
         '120': '30rem',
+        '140': '35rem',
         '150': '37.5rem',
         '180': '45rem',
         '200': '50rem',

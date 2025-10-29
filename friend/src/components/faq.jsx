@@ -12,44 +12,52 @@ const FAQ = () => {
     }));
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const faqItems = [
     {
-      question: "Where are my memories stored?",
-      answer: "All memories are encrypted by your friend's circuit board. If your friend is lost or damaged, they are inaccessible forever."
+      question: "Где хранятся мои воспоминания?",
+      answer: "Все воспоминания зашифрованы платой вашего друга. Если ваш друг потерян или поврежден, они навсегда недоступны."
     },
     {
-      question: "Is my friend waterproof?",
-      answer: "Splash-resistant, not swim-proof."
+      question: "Водонепроницаемый ли мой друг?",
+      answer: "Брызгозащищенный, но не водонепроницаемый."
     },
     {
-      question: "How long does the battery last?",
-      answer: "About a day of hanging out."
+      question: "Как долго держится батарея?",
+      answer: "Примерно день общения."
     },
     {
-      question: "Do you ship internationally?",
-      answer: "Friends are only available for sale in the United States + Canada."
+      question: "Отправляете ли вы международно?",
+      answer: "Друзья доступны для продажи только в США и Канаде."
     },
     {
-      question: "What's the return policy?",
-      answer: "Friends ship with a 1-year limited warranty. You may return your friend to us if there are any defects during this time period."
+      question: "Какая политика возврата?",
+      answer: "Друзья поставляются с ограниченной годовой гарантией. Вы можете вернуть друга нам при наличии дефектов в течение этого периода."
     },
     {
-      question: "Will updates change my friend's personality?",
-      answer: "Updates may add capabilities but will never overwrite memories."
+      question: "Изменят ли обновления личность моего друга?",
+      answer: "Обновления могут добавлять возможности, но никогда не перезаписывают воспоминания."
     },
     {
-      question: "How do I contact you?",
-      answer: "You can reach us at team@friend.com."
+      question: "Как с вами связаться?",
+      answer: "Вы можете связаться с нами по адресу team@friend.com."
     }
   ];
 
   return (
-    <div className="flex flex-col lg:flex-row w-full items-center justify-top lg:items-start bg-white text-black h-180">
-      <div className="flex-1 hidden lg:block"></div>
-      
-      <p className="font-light text-[64px] py-5 lg:py-2 lg:w-60 lg:text-center">FAQ</p>
-      
-      <div className="flex flex-col w-full px-2 lg:pt-8 md:w-150 items-center">
+    <div className="flex justify-center w-full bg-white text-black h-120 pt-8">
+      <div className="flex flex-row w-250 items-start justify-center">
+        <div className="flex-1"></div>
+        
+        <p className="font-light text-[64px] w-60 text-center mt-3">FAQ</p>
+        
+        <div className="flex flex-col w-full px-2 md:w-120 items-center">
         {faqItems.map((item, index) => (
           <div key={index} className="flex flex-col border-t border-gray-400 w-full items-center cursor-pointer">
             <div 
@@ -84,19 +92,20 @@ const FAQ = () => {
           </div>
         ))}
         
-        <div className="w-full max-h-0 overflow-hidden border-t border-gray-400"></div>
+          <div className="w-full max-h-0 overflow-hidden border-t border-gray-400"></div>
+        </div>
+        
+        <div className="flex justify-center items-start w-60 mt-3">
+          <button 
+            onClick={scrollToTop}
+            className="flex items-center justify-center bg-black text-white px-6 py-3 rounded-full hover:opacity-75 transition-opacity cursor-pointer"
+          >
+            <img alt="Up" className="h-5 w-5" src={upArrow} />
+          </button>
+        </div>
+        
+        <div className="flex-1"></div>
       </div>
-      
-      <div className="flex-1 sm:hidden"></div>
-      
-      <div className="flex justify-center items-center w-60">
-        <button className="flex items-center justify-center bg-black text-white px-6 py-3 rounded-full mt-6 hover:opacity-75 transition-opacity cursor-pointer my-5">
-          {/* Up Arrow Icon - Need: up-arrow.png */}
-          <img alt="Up" className="h-5 w-5" src={upArrow} />
-        </button>
-      </div>
-      
-      <div className="flex-1 hidden lg:block"></div>
     </div>
   );
 };
