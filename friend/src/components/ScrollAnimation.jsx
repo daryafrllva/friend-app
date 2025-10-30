@@ -21,7 +21,7 @@ import wordCloud4 from '../images/word_cloud_4.png';
 import phoneImage from '../images/phone.png';
 import arrowRight from '../images/arrow_right.png';
 import appStoreBadge from '../images/Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg';
-
+import googlPlay from '../images/googlPlay.svg';
 
 const FriendPage = () => {
     // 1. Создаем ref для секции, к которой будем скроллить
@@ -374,14 +374,26 @@ const ScrollAnimation = () => {
                         top: '50%',
                         left: '50%',
                         transformOrigin: 'center center',
-                        transform: 'translate(-50%, -50%) translate(400px, 330px)',
+                        transform: 'translate(-50%, -50%) translate(400px, 100px)',
                         opacity: orderButtonOpacity,
                         willChange: 'opacity',
                     }}
                 >
+                    <div
+                        className="flex flex-col text-black items-start mb-2 font-light"
+                        style={{
+                            opacity: productDetailsOpacity,
+                            transform: 'translate(0px, 0%)'
+                        }}
+                    >
+                        <h4 className="mb-2" style={{ fontWeight: 400 }}>Тот, кто всегда выслушает!</h4>
+                        <p className="mb-2" >Мы создали Friend не для того, чтобы он ставил таймеры или управлял светом.<br/> Мы создали его, чтобы он слушал вас.</p>
+                        <p>Это ваш личный ИИ-компаньон, который помнит ваши диалоги, понимает контекст и никогда не осуждает. Он здесь, когда вам просто нужно выговориться — в любое время дня и ночи, — гарантируя 100% конфиденциальность.</p>
+                    </div>
+
                     <button 
                         onClick={openModal}
-                        className="flex items-center justify-center bg-black text-white px-6 py-2 mb-2 rounded-full hover:opacity-50 cursor-pointer gap-2 z-20"
+                        className="flex items-center justify-center bg-black text-white px-6 py-2 my-2 rounded-full hover:opacity-50 cursor-pointer gap-2 z-20"
                         style={{
                             opacity: 1,
                             transform: 'translate(0px, 0%)'
@@ -392,26 +404,32 @@ const ScrollAnimation = () => {
                     </button>
                     
                     <div 
-                        className="flex flex-col text-black items-start my-6 font-light"
+                        className="flex flex-col text-black items-start mt-2 font-light"
                         style={{
                             opacity: productDetailsOpacity,
                             transform: 'translate(0px, 0%)'
                         }}
                     >
-                        <p>5000₽</p>
-                        <p>подписка 500₽ месяц</p>
-                        <p>1 год гарантии</p>
+                        <p className="mb-2 text-gray-700" >Подписка — это не плата за функции. Это плата за отношения и вашу личную «крепость доверия».</p>
+                        <p className=" text-gray-700">Стоимость устройства: 5 000 ₽ </p>
+                        <p className=" text-gray-700">Подписка: 500 ₽/мес.</p>
+
                     </div>
-                    
-                    <img 
-                        alt="Download on the App Store" 
-                        className="cursor-pointer mr-7 mt-2" 
-                        src={appStoreBadge}
-                        style={{
-                            opacity: productDetailsOpacity,
-                            transform: 'translate(0px, 0%)'
-                        }}
-                    />
+                    {/* Более крупные кнопки */}
+                    <div className="flex flex-row items-center  space-x-4">
+                        <img
+                            alt="Download on the App Store"
+                            className="cursor-pointer h-12 w-auto"
+                            src={appStoreBadge}
+                            style={{ opacity: productDetailsOpacity }}
+                        />
+                        <img
+                            alt="Download on the Google Play"
+                            className="cursor-pointer h-37 w-auto"
+                            src={googlPlay}
+                            style={{ opacity: productDetailsOpacity }}
+                        />
+                    </div>
                 </div>
 
             </div>
