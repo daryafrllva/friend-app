@@ -92,6 +92,7 @@ const ScrollAnimation = () => {
     const sectionRef = useRef(null);
     const [scrollProgress, setScrollProgress] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -127,6 +128,13 @@ const ScrollAnimation = () => {
     };
 
     useEffect(() => {
+        // Проверяем, мобильное ли устройство
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+        
+        checkMobile(); // Первоначальная проверка
+        
         // Добавляем requestAnimationFrame для плавности
         let animationFrameId = null;
         const handleScroll = () => {
@@ -134,13 +142,19 @@ const ScrollAnimation = () => {
             animationFrameId = requestAnimationFrame(updateScrollProgress);
         };
 
+        const handleResize = () => {
+            checkMobile();
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            animationFrameId = requestAnimationFrame(updateScrollProgress);
+        };
+
         window.addEventListener('scroll', handleScroll, { passive: true });
-        window.addEventListener('resize', handleScroll);
+        window.addEventListener('resize', handleResize);
         updateScrollProgress(); // Первоначальный расчет
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
-            window.removeEventListener('resize', handleScroll);
+            window.removeEventListener('resize', handleResize);
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
         };
     }, []);
@@ -156,15 +170,28 @@ const ScrollAnimation = () => {
     const logoOpacity = 1 - normalizeProgress(scrollProgress, 0.25, 0.38);
 
     // Phone section elements (появляются после белого слоя)
-    const phoneOpacity = normalizeProgress(scrollProgress, 0.78, 0.82);
+    // Мобильная логика: сначала телефон с облачком, затем исчезает и появляется текст
+    const phoneOpacity = isMobile ? 
+        normalizeProgress(scrollProgress, 0.78, 0.82) * (1 - normalizeProgress(scrollProgress, 0.85, 0.89)) :
+        normalizeProgress(scrollProgress, 0.78, 0.82);
     const phoneScale = lerp(0.8, 1, normalizeProgress(scrollProgress, 0.78, 0.82));
 
-    const friendLogoOpacity = normalizeProgress(scrollProgress, 0.83, 0.87);
-    const friendTextOpacity = normalizeProgress(scrollProgress, 0.85, 0.89);
+    const friendLogoOpacity = isMobile ? 
+        normalizeProgress(scrollProgress, 0.89, 0.93) :
+        normalizeProgress(scrollProgress, 0.83, 0.87);
+    const friendTextOpacity = isMobile ? 
+        normalizeProgress(scrollProgress, 0.91, 0.95) :
+        normalizeProgress(scrollProgress, 0.85, 0.89);
     
-    const orderButtonOpacity = normalizeProgress(scrollProgress, 0.87, 0.91);
-    const productDetailsOpacity = normalizeProgress(scrollProgress, 0.89, 0.93);
-    const appStoreOpacity = normalizeProgress(scrollProgress, 0.91, 0.95);
+    const orderButtonOpacity = isMobile ? 
+        normalizeProgress(scrollProgress, 0.93, 0.97) :
+        normalizeProgress(scrollProgress, 0.87, 0.91);
+    const productDetailsOpacity = isMobile ? 
+        normalizeProgress(scrollProgress, 0.95, 0.99) :
+        normalizeProgress(scrollProgress, 0.89, 0.93);
+    const appStoreOpacity = isMobile ? 
+        normalizeProgress(scrollProgress, 0.97, 1.0) :
+        normalizeProgress(scrollProgress, 0.91, 0.95);
 
 
     // 3. Девушка (плавное появление и исчезновение)
@@ -252,8 +279,9 @@ const ScrollAnimation = () => {
                     let cloudOpacity;
                     
                     if (idx === 4) {
-                        // Облако 4 остается видимым до самого конца
-                        cloudOpacity = fadeIn; // Не тускнеет
+                        // Облако 4: на мобильных исчезает с телефоном, на десктопе остается
+                        const mobileFadeOut = isMobile ? (1 - normalizeProgress(scrollProgress, 0.85, 0.89)) : 1;
+                        cloudOpacity = fadeIn * mobileFadeOut;
                     } else {
                         // Облака 0-3 исчезают раньше
                         const fadeOut = 1 - normalizeProgress(scrollProgress, 0.65, 0.69);
@@ -325,31 +353,42 @@ const ScrollAnimation = () => {
                 <img
                     src={phoneImage}
                     alt="Phone"
-                    className="absolute z-50 w-[1200px] h-auto object-contain lg:w-[1500px]"
+                    className={`absolute object-cover ${
+                        isMobile ? 'w-250 h-250 z-50 bottom-1/2 left-1/2' : 'z-50 w-[1200px] lg:w-[1500px]'
+                    }`}
                     style={{
-                        left: '50%',
-                        top: '50%',
+                        ...(isMobile ? {
+                            transform: `translate(-50%, 50%) scale(${phoneScale * 0.7})`,
+                        } : {
+                            left: '50%',
+                            top: '50%',
+                            transform: `translate(-50%, -50%) scale(${phoneScale})`,
+                        }),
                         opacity: phoneOpacity,
-                        transform: `translate(-50%, -50%) scale(${phoneScale})`,
                         willChange: 'transform, opacity',
+                        visibility: phoneOpacity > 0 ? 'visible' : 'hidden'
                     }}
                 />
 
-                {/* Friend Logo and Text - Desktop как в phone.jsx */}
+                {/* Friend Logo and Text */}
                 <div 
-                    className="absolute z-50 w-80 h-80 flex flex-col items-start justify-start"
+                    className={`absolute z-50 flex flex-col items-start justify-start ${
+                        isMobile ? 'w-full px-8 top-8 left-0' : 'w-80 h-80'
+                    }`}
                     style={{
-                        top: '50%',
-                        left: '50%',
-                        transformOrigin: 'center center',
-                        transform: 'translate(-50%, -50%) translate(-350px, -200px)',
+                        ...(isMobile ? {} : {
+                            top: '50%',
+                            left: '50%',
+                            transformOrigin: 'center center',
+                            transform: 'translate(-50%, -50%) translate(-350px, -200px)',
+                        }),
                         opacity: friendLogoOpacity,
                         willChange: 'opacity',
                     }}
                 >
                     <img 
                         alt="Friend" 
-                        className="w-full p-5" 
+                        className={isMobile ? "w-48" : "w-full p-5"} 
                         src={footerLogo}
                         style={{
                             opacity: 1,
@@ -367,14 +406,20 @@ const ScrollAnimation = () => {
                     </p>
                 </div>
 
-                {/* Order Button and Details - Desktop как в phone.jsx */}
+                {/* Order Button and Details */}
                 <div 
-                    className="absolute z-50 w-80 h-120 flex flex-col items-start justify-start"
+                    className={`absolute z-50 flex flex-col items-start justify-start ${
+                        isMobile ? 'w-full px-8 top-1/2 left-0' : 'w-80 h-120'
+                    }`}
                     style={{
-                        top: '50%',
-                        left: '50%',
-                        transformOrigin: 'center center',
-                        transform: 'translate(-50%, -50%) translate(400px, 100px)',
+                        ...(isMobile ? {
+                            transform: 'translate(0, -50%)'
+                        } : {
+                            top: '50%',
+                            left: '50%',
+                            transformOrigin: 'center center',
+                            transform: 'translate(-50%, -50%) translate(400px, 100px)',
+                        }),
                         opacity: orderButtonOpacity,
                         willChange: 'opacity',
                     }}
@@ -413,10 +458,9 @@ const ScrollAnimation = () => {
                         <p className="mb-2 text-gray-700" >Подписка — это не плата за функции. Это плата за отношения и вашу личную «крепость доверия».</p>
                         <p className=" text-gray-700">Стоимость устройства: 5 000 ₽ </p>
                         <p className=" text-gray-700">Подписка: 500 ₽/мес.</p>
-
                     </div>
-                    {/* Более крупные кнопки */}
-                    <div className="flex flex-row items-center  space-x-4">
+                    
+                    <div className="flex flex-row items-center space-x-4">
                         <img
                             alt="Download on the App Store"
                             className="cursor-pointer h-12 w-auto"

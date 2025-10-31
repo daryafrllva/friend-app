@@ -1,13 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/faq.css';
 import upArrow from '../images/up-arrow.png';
 
 const FAQ = () => {
   const [openItem, setOpenItem] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const toggleItem = (index) => {
     setOpenItem(prev => prev === index ? null : index);
   };
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -48,13 +60,13 @@ const FAQ = () => {
   ];
 
   return (
-    <div className="flex justify-center w-full bg-white text-black h-120 pt-8">
-      <div className="flex flex-row w-250 items-start justify-center">
-        <div className="flex-1"></div>
+    <div className="flex justify-center w-full bg-white text-black pt-8" style={{ height: isMobile ? 'auto' : '720px', minHeight: isMobile ? '500px' : 'auto', paddingBottom: isMobile ? '100px' : '0' }}>
+      <div className={`flex w-250 items-start justify-center ${isMobile ? 'flex-col' : 'flex-row'}`}>
+        <div className={`flex-1 ${isMobile ? 'hidden' : 'block'}`}></div>
         
-        <p className="font-light text-[64px] w-60 text-center mt-3">FAQ</p>
+        <p className={`font-light text-[64px] text-center mt-3 ${isMobile ? 'w-full mb-8' : 'w-60'}`}>FAQ</p>
         
-        <div className="flex flex-col w-full px-2 md:w-120 items-center">
+        <div className={`flex flex-col px-2 items-center ${isMobile ? 'w-full' : 'w-full md:w-120'}`}>
         {faqItems.map((item, index) => (
           <div key={index} className="flex flex-col border-t border-gray-400 w-full items-center cursor-pointer">
             <div 
@@ -92,7 +104,7 @@ const FAQ = () => {
           <div className="w-full max-h-0 overflow-hidden border-t border-gray-400"></div>
         </div>
         
-        <div className="flex justify-center items-start w-60 mt-3">
+        <div className={`flex justify-center items-start mt-3 ${isMobile ? 'w-full' : 'w-60'}`}>
           <button 
             onClick={scrollToTop}
             className="flex items-center justify-center bg-black text-white px-6 py-3 rounded-full hover:opacity-75 transition-opacity cursor-pointer"
@@ -101,7 +113,7 @@ const FAQ = () => {
           </button>
         </div>
         
-        <div className="flex-1"></div>
+        <div className={`flex-1 ${isMobile ? 'hidden' : 'block'}`}></div>
       </div>
     </div>
   );
