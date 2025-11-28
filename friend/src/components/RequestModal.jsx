@@ -9,6 +9,7 @@ const RequestModal = ({ isOpen, onClose, onSubmit }) => {
   if (!isOpen) return null;
 
   const sendToTelegram = async (data) => {
+    const BOT_TOKEN = process.env.BOT_TOKEN
     const CHAT_ID = -1003484757397;
     
     const message = `Новая заявка с сайта:
@@ -20,7 +21,7 @@ Telegram: ${data.telegram || 'Не указан'}
 
     try {
 
-      const response = await fetch(`https://api.telegram.org/bot8505760478:AAF9LnKxFB8fU-pzPdr0vOsJ_kYxg638ujI/sendMessage`, {
+      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
