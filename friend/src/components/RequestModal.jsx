@@ -8,7 +8,47 @@ const RequestModal = ({ isOpen, onClose, onSubmit }) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const sendToTelegram = async (data) => {
+    const CHAT_ID = -1003484757397;
+    
+    const message = `Новая заявка с сайта:
+
+ФИО: ${data.fullName}
+Email: ${data.email}
+Telegram: ${data.telegram || 'Не указан'}
+Время: ${new Date().toLocaleString('ru-RU')}`;
+
+    try {
+
+      const response = await fetch(`https://api.telegram.org/bot8505760478:AAF9LnKxFB8fU-pzPdr0vOsJ_kYxg638ujI/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: message.trim(),
+          disable_web_page_preview: true
+        }),
+      });
+
+      if (response.ok) {
+        alert('Заявка отправлена успешно!');
+        return true;
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Ошибка отправки в Telegram:', response.status, errorData);
+        alert(`Ошибка отправки заявки: ${response.status}. Попробуйте позже.`);
+        return false;
+      }
+    } catch (error) {
+      console.error('Ошибка при отправке в Telegram:', error);
+      alert('Ошибка отправки заявки. Проверьте интернет-соединение.');
+      return false;
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // basic validation
     if (!fullName.trim()) {
@@ -19,14 +59,21 @@ const RequestModal = ({ isOpen, onClose, onSubmit }) => {
       alert('Пожалуйста, укажите email');
       return;
     }
+    
     // pass data upward
     const data = { fullName, email, telegram };
-    if (onSubmit) onSubmit(data);
-    // reset and close
-    setFullName('');
-    setEmail('');
-    setTelegram('');
-    onClose();
+    
+    // Send to Telegram
+    const success = await sendToTelegram(data);
+    
+    if (success) {
+      if (onSubmit) onSubmit(data);
+      // reset and close
+      setFullName('');
+      setEmail('');
+      setTelegram('');
+      onClose();
+    }
   };
 
   return (
