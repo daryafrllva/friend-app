@@ -409,7 +409,7 @@ const ScrollAnimation = () => {
                 {/* Order Button and Details */}
                 <div 
                     className={`absolute z-50 flex flex-col items-start justify-start ${
-                        isMobile ? 'w-full px-8 top-1/2 left-0' : 'w-80 h-120'
+                        isMobile ? 'w-full px-9 top-120 left-0' : 'w-80 h-120'
                     }`}
                     style={{
                         ...(isMobile ? {
