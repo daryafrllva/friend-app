@@ -9,7 +9,7 @@ const RequestModal = ({ isOpen, onClose, onSubmit }) => {
   if (!isOpen) return null;
 
   const sendToTelegram = async (data) => {
-    const BOT_TOKEN = process.env.BOT_TOKEN
+    const BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN;
     const CHAT_ID = -1003484757397;
     
     const message = `Новая заявка с сайта:
