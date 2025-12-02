@@ -9,42 +9,52 @@ const RequestModal = ({ isOpen, onClose, onSubmit }) => {
   if (!isOpen) return null;
 
   const sendToTelegram = async (data) => {
-    const BOT_TOKEN = import.meta.env.VITE_BOT_TOKEN;
-    const CHAT_ID = -1003484757397;
-    
-    const message = `Новая заявка с сайта:
+    const requestData = {
+      name: data.fullName.trim(),
+      email: data.email.trim(),
+      telegram_id: data.telegram.trim() || null,
+    };
 
-ФИО: ${data.fullName}
-Email: ${data.email}
-Telegram: ${data.telegram || 'Не указан'}
-Время: ${new Date().toLocaleString('ru-RU')}`;
+    console.log('Отправляемые данные:', requestData);
 
     try {
-
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      const response = await fetch('https://serve-ai.ru/api/send-to-telegram', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: message.trim(),
-          disable_web_page_preview: true
-        }),
+        body: JSON.stringify(requestData),
       });
 
+      console.log('Статус ответа:', response.status);
+      
       if (response.ok) {
-        alert('Заявка отправлена успешно!');
+        const result = await response.json().catch(() => null);
+        console.log('Успешный ответ:', result);
         return true;
       } else {
-        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Ошибка отправки в Telegram:', response.status, errorData);
-        alert(`Ошибка отправки заявки: ${response.status}. Попробуйте позже.`);
+        // Пытаемся получить детальную ошибку
+        const errorText = await response.text().catch(() => 'Неизвестная ошибка');
+        console.error('Ошибка сервера:', {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText
+        });
+        
+        // Показываем пользователю более информативное сообщение
+        let userMessage = `Ошибка ${response.status}: `;
+        if (response.status === 400) {
+          userMessage += 'Проверьте правильность введённых данных';
+        } else if (response.status === 500) {
+          userMessage += 'Ошибка сервера, попробуйте позже';
+        } else {
+          userMessage += 'Попробуйте позже';
+        }
+        
         return false;
       }
     } catch (error) {
-      console.error('Ошибка при отправке в Telegram:', error);
-      alert('Ошибка отправки заявки. Проверьте интернет-соединение.');
+      console.error('Ошибка сети:', error);
       return false;
     }
   };
@@ -53,11 +63,9 @@ Telegram: ${data.telegram || 'Не указан'}
     e.preventDefault();
     // basic validation
     if (!fullName.trim()) {
-      alert('Пожалуйста, укажите ФИО');
       return;
     }
     if (!email.trim()) {
-      alert('Пожалуйста, укажите email');
       return;
     }
     
