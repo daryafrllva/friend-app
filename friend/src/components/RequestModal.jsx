@@ -115,6 +115,7 @@ const RequestModal = ({ isOpen, onClose, onSubmit }) => {
             Telegram ID
             <input
               className="request-modal-input"
+              type="text"
               value={telegram}
               onChange={(e) => setTelegram(e.target.value)}
               placeholder="@your_telegram"
