@@ -20,7 +20,7 @@
 .request-modal-cancel{background:transparent;color:#111;border:1px solid #111}
 .request-modal-cancel:hover{background:#f5f5f5;transform:translateY(-4px) scale(1.02)}
 .request-modal-submit{background:#111;color:#fff;border:1px solid #111}
-.request-modal-submit:hover{background:#000;transform:translateY(-4px) scale(1.02)}
+.request-modal-submit:hover{background:#000}
 @media (max-width:640px){.request-modal-card{width:92%;padding:18px}}
 
 @keyframes requestModalPop {

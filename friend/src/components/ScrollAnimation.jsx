@@ -101,7 +101,6 @@ const ScrollAnimation = () => {
         console.log('Request submitted:', data);
         // simple feedback
         try {
-            alert('Заявка отправлена. Спасибо!');
         } catch (e) {}
     };
 

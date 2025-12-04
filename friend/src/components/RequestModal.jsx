@@ -15,7 +15,6 @@ const RequestModal = ({ isOpen, onClose, onSubmit }) => {
       telegram_id: data.telegram.trim() || null,
     };
 
-    console.log('Отправляемые данные:', requestData);
 
     try {
       const response = await fetch('https://serve-ai.ru/api/send-to-telegram', {
